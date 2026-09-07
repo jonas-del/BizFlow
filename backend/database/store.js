@@ -24,6 +24,12 @@ const defaultData = {
         emailReports: false,
         compactMode: false
     },
+    user: {
+        id: 1,
+        name: "Demo User",
+        email: "demo@bizflow.local",
+        role: "owner"
+    },
     counters: {
         products: 1,
         sales: 1,

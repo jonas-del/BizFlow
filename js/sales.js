@@ -2632,7 +2632,44 @@ const Sales = (() => {
         }
     };
 
-        const showDetails = sale => {
+    const edit = id => {
+        const sale = state.sales.find(item => String(getId(item)) === String(id));
+
+        if (!sale) {
+            toast("Sale could not be found.", "error");
+            return;
+        }
+
+        const form = $("#saleForm");
+
+        if (!form) {
+            toast("The sale form is unavailable.", "error");
+            return;
+        }
+
+        const item = Array.isArray(sale.items) ? sale.items[0] : null;
+        state.editingId = getId(sale);
+
+        populateProductSelect();
+        populateCustomerSelect();
+        setFormValue(form, "productId", sale.productId ?? item?.productId);
+        setFormValue(form, "customerId", sale.customerId);
+        setFormValue(form, "quantity", sale.quantity ?? item?.quantity ?? 1);
+        setFormValue(form, "unitPrice", sale.unitPrice ?? item?.price ?? 0);
+        setFormValue(form, "paymentMethod", sale.paymentMethod ?? "cash");
+        setFormValue(form, "status", sale.status ?? "completed");
+        setFormValue(form, "notes", sale.notes ?? "");
+
+        const title = $("#saleModalTitle");
+        if (title) {
+            title.textContent = "Edit Sale";
+        }
+
+        updateSalePreview();
+        openModal();
+    };
+
+    const showDetails = sale => {
         let modal =
             $("#saleDetailsModal");
 

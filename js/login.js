@@ -27,6 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const message =
         document.querySelector("#loginMessage") ||
+        document.querySelector("[data-auth-error]") ||
         document.querySelector(".login-message") ||
         document.querySelector(".form-message");
 
@@ -274,9 +275,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const demoLogin =
-        document.querySelector(
-            "#demoLogin"
-        );
+        document.querySelector("#demoLogin") ||
+        document.querySelector("[data-demo-login]");
 
     if (demoLogin) {
         demoLogin.addEventListener(
@@ -299,4 +299,84 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         );
     }
+
+    const registerLink = document.querySelector("[data-register-link]");
+
+    registerLink?.addEventListener("click", event => {
+        event.preventDefault();
+
+        if (document.querySelector("#registrationModal")) {
+            return;
+        }
+
+        const modal = document.createElement("div");
+        modal.id = "registrationModal";
+        modal.className = "modal open";
+        modal.innerHTML = `
+            <div class="modal-overlay" data-close-registration></div>
+            <div class="modal-content auth-registration-modal">
+                <div class="modal-header">
+                    <div>
+                        <span class="auth-small-title">GET STARTED</span>
+                        <h2>Create your account</h2>
+                    </div>
+                    <button type="button" class="modal-close" data-close-registration aria-label="Close registration">&times;</button>
+                </div>
+                <form id="registrationForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="registrationName">Full name</label>
+                        <input id="registrationName" name="name" type="text" autocomplete="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registrationEmail">Email address</label>
+                        <input id="registrationEmail" name="email" type="email" autocomplete="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registrationPassword">Password</label>
+                        <input id="registrationPassword" name="password" type="password" minlength="6" autocomplete="new-password" required>
+                    </div>
+                    <div class="form-message" id="registrationMessage" hidden></div>
+                    <button type="submit" class="auth-submit">Create account</button>
+                </form>
+            </div>
+        `;
+
+        document.body.appendChild(modal);
+
+        const close = () => modal.remove();
+        modal.querySelectorAll("[data-close-registration]").forEach(button => {
+            button.addEventListener("click", close);
+        });
+
+        modal.querySelector("#registrationForm").addEventListener("submit", async registrationEvent => {
+            registrationEvent.preventDefault();
+
+            const formData = new FormData(registrationEvent.currentTarget);
+            const registrationMessage = modal.querySelector("#registrationMessage");
+            const submit = registrationEvent.currentTarget.querySelector("button[type=submit]");
+
+            submit.disabled = true;
+
+            try {
+                await window.Auth.register({
+                    name: formData.get("name"),
+                    email: formData.get("email"),
+                    password: formData.get("password")
+                });
+
+                registrationMessage.textContent = "Account created. Opening your workspace...";
+                registrationMessage.className = "form-message success";
+                registrationMessage.hidden = false;
+
+                setTimeout(() => {
+                    window.location.href = "pages/dashboard.html";
+                }, 400);
+            } catch (error) {
+                registrationMessage.textContent = error.message || "Unable to create your account.";
+                registrationMessage.className = "form-message error";
+                registrationMessage.hidden = false;
+                submit.disabled = false;
+            }
+        });
+    });
 });

@@ -1,7 +1,7 @@
 "use strict";
 
 const express = require("express");
-const { read } = require("../database/store");
+const { read, update } = require("../database/store");
 
 const router = express.Router();
 
@@ -32,10 +32,21 @@ router.post("/register", (req, res) => {
 		return res.status(400).json({ success: false, message: "Email and password are required" });
 	}
 
+	const user = update(data => {
+		data.user = {
+			...data.user,
+			name: name || "Business Admin",
+			email,
+			updatedAt: new Date().toISOString()
+		};
+
+		return data.user;
+	});
+
 	res.status(201).json({
 		success: true,
 		message: "Registration successful",
-		user: { ...read().user, name: name || "Business Admin", email },
+		user,
 		token: "bizflow-demo-session"
 	});
 });
