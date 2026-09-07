@@ -1,0 +1,7 @@
+node_modules/
+backend/database/data/
+backend-server.log
+backend-server-error.log
+.env
+.env.*
+!.env.example

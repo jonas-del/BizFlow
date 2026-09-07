@@ -1,0 +1,130 @@
+ @media(max-width:768px) {
+
+    .sidebar {
+
+        transform:translateX(-100%);
+
+        box-shadow:
+            15px 0 40px
+            rgba(0,0,0,.12);
+
+    }
+
+
+    .sidebar.show {
+
+        transform:translateX(0);
+
+    }
+
+
+    .sidebar-overlay {
+
+        position:fixed;
+
+        inset:0;
+
+        background:rgba(
+            15,
+            23,
+            42,
+            .45
+        );
+
+        backdrop-filter:blur(2px);
+
+        z-index:900;
+
+    }
+
+
+    .sidebar-overlay.show {
+
+        display:block;
+
+    }
+
+
+    .menu-btn {
+
+        display:block;
+
+    }
+
+
+    .mobile-brand {
+
+        display:flex;
+
+    }
+
+
+    .search-box {
+
+        display:none;
+
+    }
+
+
+    .topbar {
+
+        padding:0 16px;
+
+    }
+
+
+    .profile-info,
+    .profile-arrow {
+
+        display:none;
+
+    }
+
+
+    .top-actions {
+
+        gap:7px;
+
+    }
+
+
+    .icon-btn {
+
+        width:36px;
+
+        height:36px;
+
+    }
+
+}
+
+
+@media(max-width:500px) {
+
+    #toastContainer {
+
+        left:15px;
+
+        right:15px;
+
+        bottom:15px;
+
+    }
+
+
+    .toast {
+
+        min-width:0;
+
+        width:100%;
+
+    }
+
+
+    .topbar {
+
+        height:64px;
+
+    }
+
+}
