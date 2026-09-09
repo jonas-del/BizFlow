@@ -427,6 +427,11 @@ const Products = (() => {
             ],
             number(outOfStock)
         );
+
+        setText(
+            ["#catalogCount"],
+            `${number(total)} ${total === 1 ? "product" : "products"}`
+        );
     };
 
     const setText = (

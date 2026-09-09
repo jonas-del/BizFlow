@@ -312,32 +312,42 @@ document.addEventListener("DOMContentLoaded", () => {
         const modal = document.createElement("div");
         modal.id = "registrationModal";
         modal.className = "modal open";
+        modal.setAttribute("role", "dialog");
+        modal.setAttribute("aria-modal", "true");
         modal.innerHTML = `
             <div class="modal-overlay" data-close-registration></div>
-            <div class="modal-content auth-registration-modal">
-                <div class="modal-header">
+            <div class="modal-content auth-modal-card">
+                <div class="auth-modal-header">
                     <div>
                         <span class="auth-small-title">GET STARTED</span>
                         <h2>Create your account</h2>
                     </div>
                     <button type="button" class="modal-close" data-close-registration aria-label="Close registration">&times;</button>
                 </div>
-                <form id="registrationForm" class="auth-form">
-                    <div class="form-group">
-                        <label for="registrationName">Full name</label>
-                        <input id="registrationName" name="name" type="text" autocomplete="name" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registrationEmail">Email address</label>
-                        <input id="registrationEmail" name="email" type="email" autocomplete="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="registrationPassword">Password</label>
-                        <input id="registrationPassword" name="password" type="password" minlength="6" autocomplete="new-password" required>
-                    </div>
-                    <div class="form-message" id="registrationMessage" hidden></div>
-                    <button type="submit" class="auth-submit">Create account</button>
-                </form>
+                <div class="auth-modal-body">
+                    <form id="registrationForm" class="auth-form auth-modal-form" novalidate>
+                        <div class="form-group">
+                            <label for="registrationName">Full name</label>
+                            <div class="input-wrapper">
+                                <input id="registrationName" name="name" type="text" autocomplete="name" placeholder="Your full name" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="registrationEmail">Email address</label>
+                            <div class="input-wrapper">
+                                <input id="registrationEmail" name="email" type="email" autocomplete="email" placeholder="you@example.com" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="registrationPassword">Password</label>
+                            <div class="input-wrapper">
+                                <input id="registrationPassword" name="password" type="password" minlength="6" autocomplete="new-password" placeholder="Create a password" required>
+                            </div>
+                        </div>
+                        <div class="form-message" id="registrationMessage" hidden></div>
+                        <button type="submit" class="auth-submit">Create account</button>
+                    </form>
+                </div>
             </div>
         `;
 
@@ -348,6 +358,19 @@ document.addEventListener("DOMContentLoaded", () => {
             button.addEventListener("click", close);
         });
 
+        modal.addEventListener("click", event => {
+            if (event.target === modal) {
+                close();
+            }
+        });
+
+        document.addEventListener("keydown", function onEscape(event) {
+            if (event.key === "Escape" && document.querySelector("#registrationModal")) {
+                close();
+                document.removeEventListener("keydown", onEscape);
+            }
+        });
+
         modal.querySelector("#registrationForm").addEventListener("submit", async registrationEvent => {
             registrationEvent.preventDefault();
 
@@ -355,13 +378,27 @@ document.addEventListener("DOMContentLoaded", () => {
             const registrationMessage = modal.querySelector("#registrationMessage");
             const submit = registrationEvent.currentTarget.querySelector("button[type=submit]");
 
+            const name = String(formData.get("name") || "").trim();
+            const email = String(formData.get("email") || "").trim();
+            const password = String(formData.get("password") || "");
+
+            if (!name || !email || !password || password.length < 6) {
+                registrationMessage.textContent = "Please enter a valid name, email, and a password with at least 6 characters.";
+                registrationMessage.className = "form-message error";
+                registrationMessage.hidden = false;
+                return;
+            }
+
             submit.disabled = true;
+            registrationMessage.textContent = "Creating your account...";
+            registrationMessage.className = "form-message loading";
+            registrationMessage.hidden = false;
 
             try {
                 await window.Auth.register({
-                    name: formData.get("name"),
-                    email: formData.get("email"),
-                    password: formData.get("password")
+                    name,
+                    email,
+                    password
                 });
 
                 registrationMessage.textContent = "Account created. Opening your workspace...";

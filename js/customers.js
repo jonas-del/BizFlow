@@ -321,20 +321,20 @@ const Customers = (() => {
         value
     ) => {
         for (const selector of selectors) {
-            const element =
-                $(selector);
+            const elements =
+                document.querySelectorAll(selector);
 
-            if (element) {
-                element.textContent =
-                    value;
-
-                return;
-            }
+            elements.forEach(element => {
+                element.textContent = value;
+            });
         }
     };
 
     const renderTable = () => {
         const tbody =
+            $(
+                "#customerTableBody"
+            ) ||
             $(
                 "#customersTableBody"
             ) ||
@@ -527,6 +527,9 @@ const Customers = (() => {
 
     const renderPagination = () => {
         const container =
+            $(
+                "#customerPagination"
+            ) ||
             $(
                 "#customersPagination"
             ) ||

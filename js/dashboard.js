@@ -1386,6 +1386,7 @@ const Dashboard = (() => {
         const trigger =
             findElement(
                 "#searchTrigger",
+                "#globalSearchButton",
                 ".search-trigger"
             );
 
@@ -1399,6 +1400,7 @@ const Dashboard = (() => {
             findElement(
                 "#globalSearch",
                 "#searchInput",
+                "#globalSearchInput",
                 ".search-input"
             );
 
@@ -1664,16 +1666,14 @@ const Dashboard = (() => {
         $$(".nav-item").forEach(item => {
             item.addEventListener(
                 "click",
-                event => {
-                    const href =
-                        item.getAttribute("href");
+                () => {
+                    if (window.innerWidth <= 850) {
+                        const sidebar = findElement("#sidebar");
+                        const overlay = findElement("#sidebarOverlay");
 
-                    if (
-                        !href ||
-                        href === "#" ||
-                        href.startsWith("javascript:")
-                    ) {
-                        event.preventDefault();
+                        sidebar?.classList.remove("open", "show");
+                        overlay?.classList.remove("open", "show");
+                        document.body.style.overflow = "";
                     }
                 }
             );

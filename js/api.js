@@ -1,8 +1,21 @@
  "use strict";
 
 const API = (() => {
+    const isLocalDevelopmentHost =
+        ["localhost", "127.0.0.1"].includes(
+            window.location.hostname
+        );
+
+    const baseURL =
+        window.BIZFLOW_API_URL ||
+        (isLocalDevelopmentHost &&
+        window.location.port &&
+        window.location.port !== "5050"
+            ? "http://localhost:5050/api"
+            : "/api");
+
     const CONFIG = {
-        baseURL: window.BIZFLOW_API_URL || "/api",
+        baseURL,
         timeout: 15000,
         credentials: "include"
     };
@@ -378,6 +391,39 @@ const API = (() => {
             )
     };
 
+    const suppliers = {
+        getAll: params =>
+            get(
+                "/suppliers",
+                params
+            ),
+
+        get: id =>
+            get(
+                `/suppliers/${encodeURIComponent(id)}`
+            ),
+
+        create: supplier =>
+            post(
+                "/suppliers",
+                supplier
+            ),
+
+        update: (
+            id,
+            supplier
+        ) =>
+            put(
+                `/suppliers/${encodeURIComponent(id)}`,
+                supplier
+            ),
+
+        delete: id =>
+            remove(
+                `/suppliers/${encodeURIComponent(id)}`
+            )
+    };
+
     const inventory = {
         get: params =>
             get(
@@ -574,6 +620,7 @@ const API = (() => {
         sales,
         customers,
         expenses,
+        suppliers,
         inventory,
         reports,
         settings

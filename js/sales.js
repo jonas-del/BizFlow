@@ -233,6 +233,22 @@ const Sales = (() => {
         }
     };
 
+    const saveLocalProducts = () => {
+        try {
+            localStorage.setItem(
+                "bizflow_products",
+                JSON.stringify(
+                    state.products
+                )
+            );
+        } catch (error) {
+            console.warn(
+                "Unable to save products locally:",
+                error
+            );
+        }
+    };
+
     const loadLocalCustomers = () => {
         try {
             const stored =
@@ -1222,6 +1238,7 @@ const Sales = (() => {
 
         setText(
             [
+                "#saleTotalPreview",
                 "#salePreviewTotal",
                 "#previewTotal",
                 "[data-sale-preview='total']"
@@ -1247,21 +1264,24 @@ const Sales = (() => {
             number(quantity)
         );
 
+        const availableStock = product
+            ? number(
+                  Number(
+                      product.stock ??
+                      product.quantity ??
+                      0
+                  )
+              )
+            : "—";
+
         setText(
             [
+                "#saleStockPreview",
                 "#salePreviewStock",
                 "#previewStock",
                 "[data-sale-preview='stock']"
             ],
-            product
-                ? number(
-                      Number(
-                          product.stock ??
-                          product.quantity ??
-                          0
-                      )
-                  )
-                : "—"
+            availableStock
         );
     };
 
@@ -1596,7 +1616,7 @@ const Sales = (() => {
                 newStock;
         }
 
-        saveProducts();
+        saveLocalProducts();
         populateProductSelect();
         updateSalePreview();
     };
