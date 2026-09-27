@@ -357,11 +357,5 @@ document.addEventListener(
             Auth.requireAuth();
         }
 
-        if (
-            page === "login" ||
-            page === "auth"
-        ) {
-            Auth.redirectIfLoggedIn();
-        }
     }
 );

@@ -5,10 +5,13 @@
     "main": "backend/server.js",
     "scripts": {
         "start": "node backend/server.js",
-        "dev": "node --watch backend/server.js"
+        "dev": "node --watch backend/server.js",
+        "db:test": "node -e \"const { testConnection } = require('./backend/config/db'); testConnection().then(r => { console.log(r ? 'MYSQL_OK' : 'MYSQL_NOT_AVAILABLE'); process.exit(r ? 0 : 1); }).catch(err => { console.error(err.message); process.exit(1); });\""
     },
     "dependencies": {
         "cors": "^2.8.5",
-        "express": "^5.1.0"
+        "dotenv": "^16.4.5",
+        "express": "^5.1.0",
+        "mysql2": "^3.3.3"
     }
 }

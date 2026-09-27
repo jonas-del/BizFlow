@@ -3,6 +3,7 @@
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
+const { testConnection } = require("./config/db");
 
 const salesRoutes = require("./routes/sales");
 const productsRoutes = require("./routes/products");
@@ -40,12 +41,15 @@ app.get("/api/health", (req, res) => {
     });
 });
 
-app.get("/api", (req, res) => {
+app.get("/api", async (req, res) => {
+    const mysqlReady = await testConnection().catch(() => false);
+
     res.status(200).json({
         success: true,
         name: "BizFlow API",
         version: "1.0.0",
-        status: "online"
+        status: "online",
+        database: mysqlReady ? "mysql" : "json-fallback"
     });
 });
 
@@ -56,6 +60,7 @@ app.use("/api/expenses", expensesRoutes);
 app.use("/api/inventory", inventoryRoutes);
 app.use("/api/reports", reportsRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/auth", authRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/settings", settingsRoutes);
 app.use("/api/suppliers", supplierRoutes);
@@ -92,7 +97,9 @@ app.use((err, req, res, next) => {
 });
 
 if (require.main === module) {
-    app.listen(PORT, () => {
+    app.listen(PORT, async () => {
+        const mysqlReady = await testConnection().catch(() => false);
+
         console.log("");
         console.log("========================================");
         console.log("          BIZFLOW API SERVER");
@@ -101,6 +108,7 @@ if (require.main === module) {
         console.log(`API: http://localhost:${PORT}/api`);
         console.log(`Health: http://localhost:${PORT}/api/health`);
         console.log(`Sales: http://localhost:${PORT}/api/sales`);
+        console.log(`Database: ${mysqlReady ? "MySQL connected" : "JSON fallback mode"}`);
         console.log("========================================");
         console.log("");
     });
