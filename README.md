@@ -28,6 +28,12 @@ npm start
 
 Open `http://localhost:5050` in a browser.
 
+## Deploy a Public Demo
+
+Deploy the repository root as a static site on Vercel or Netlify. The hosted site runs in browser demo mode automatically: visitors can use the Demo button on the login screen or enter any email and password, then explore the dashboard and all modules. Demo changes are saved in that visitor's browser only and do not sync between visitors or devices.
+
+Vercel serves the static site and routes optional `/api/*` requests to the Express function. Netlify publishes the repository root as a static site. No database or environment variables are required for the browser demo. Do not use this demo mode for real accounts or business data.
+
 For development with automatic server restarts:
 
 ```bash
